@@ -6,12 +6,8 @@ import matplotlib.ticker as ticker
 # Load and display the dataset
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
+print(df.tail(200))
 df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
-
-# Limit to the last 200 rows
-df_last_200 = df.tail(200)
-st.write("Last 200 Records of the Dataset")
-st.dataframe(df_last_200)
 
 # Sidebar for analysis selection
 st.sidebar.header("Make Your Analysis On")
@@ -22,6 +18,12 @@ analysis_section = st.sidebar.radio(
 
 # Limit analysis between 1996 and 2024
 min_year, max_year = 1996, 2024
+
+# Sidebar GitHub Link
+st.sidebar.markdown("""
+### Connect on GitHub
+[![View on GitHub](https://img.shields.io/badge/View%20on-GitHub-blue?logo=github)](https://github.com/Crow-6-9/Cipla-Stock-Analysis)
+""")
 
 # -------------------- STOCK VISUALIZATION --------------------
 if analysis_section == "Stock Visualization":
@@ -114,7 +116,7 @@ elif analysis_section == "COVID-19 Analysis":
     covid_end = pd.to_datetime("2021-12-31")
 
     # Filter data for the relevant period
-    covid_data = df[(df['Date'] >= covid_start - pd.DateOffset(months=6)) & 
+    covid_data = df[(df['Date'] >= covid_start - pd.DateOffset(months=6)) &
                     (df['Date'] <= covid_end + pd.DateOffset(months=6))]
     pre_covid = covid_data[covid_data['Date'] < covid_start]
     during_covid = covid_data[(covid_data['Date'] >= covid_start) & (covid_data['Date'] <= covid_end)]
