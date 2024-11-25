@@ -122,7 +122,7 @@ st.markdown(
     """
     <div style="background-color:#f4d03f;padding:10px;border-radius:10px">
         <h2 style="color:black;">Concluding Analysis for Cipla Stock</h2>
-        <ul style="font-size:16px;">
+        <ul style="font-size:16px; color:black ">
             <li><b>Steady Growth Over the Years:</b> Cipla has demonstrated consistent growth in its stock value, with notable peaks during periods of increased demand for healthcare and pharmaceutical products.</li>
             <li><b>Impact of External Factors:</b> The COVID-19 pandemic significantly boosted Cipla's stock performance, reflecting its critical role in addressing healthcare challenges during the crisis.</li>
             <li><b>Last Decade Performance:</b> Over the last decade (2014–2024), Cipla's stock has provided an average annual return of X%, showcasing its reliability as an investment choice.</li>
