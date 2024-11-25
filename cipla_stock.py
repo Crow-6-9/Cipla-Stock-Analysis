@@ -55,6 +55,10 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
+    st.write("Filtered data from 24/06/24 to 11/11/24")
+    filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
+    st.dataframe(filtered_df.tail(100))
+
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
 
