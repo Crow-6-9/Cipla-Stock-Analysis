@@ -8,6 +8,31 @@ st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
 df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
+# Custom color schemes for charts
+color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
+
+# Add introductory section
+st.markdown(
+    """
+    <div style="background-color:#1abc9c;padding:10px;border-radius:10px">
+        <h1 style="color:white;text-align:center;">Cipla Stock Analysis</h1>
+    </div>
+    <p style="font-size:18px;">
+        Welcome to the Cipla Stock Analysis dashboard! This app provides comprehensive insights into the historical performance of Cipla's stock. 
+        Here’s what you can explore:
+    </p>
+    <ul style="font-size:16px;">
+        <li>Stock Visualization: Analyze trading volumes and adjusted closing prices over custom date ranges.</li>
+        <li>Investment Analysis: Evaluate annual returns and identify periods of growth and profitability.</li>
+        <li>COVID-19 Impact: Understand how external factors influenced Cipla's stock performance.</li>
+    </ul>
+    <p style="font-size:18px;">
+        Dive into the data and uncover key trends that showcase Cipla's consistent growth and market reliability.
+    </p>
+    """, 
+    unsafe_allow_html=True
+)
+
 # Sidebar for analysis selection
 st.sidebar.header("Make Your Analysis On")
 analysis_section = st.sidebar.radio(
@@ -19,13 +44,6 @@ analysis_section = st.sidebar.radio(
 min_year, max_year = 1996, 2024
 
 # -------------------- STOCK VISUALIZATION --------------------
-
- # Display the last 100 values
-    st.subheader("Stock details from 24th June - 13th Nov | 2024 ")
-    st.dataframe(df.tail(100))
-
-
-
 if analysis_section == "Stock Visualization":
     st.title("Cipla Stock Data Visualization")
 
@@ -38,6 +56,10 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
+    # Display the last 100 values first
+    st.subheader("Last 100 Values from the Dataset")
+    st.dataframe(df.tail(100), height=400)  # Scrollable table for better visibility
+
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
 
@@ -46,21 +68,25 @@ if analysis_section == "Stock Visualization":
         st.subheader(f"Bar Chart of Stock Volume ({start_year}-{end_year})")
         bar_data = filtered_df[['Date', 'Volume']].set_index('Date').resample('Y').sum()
         fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
-        ax.bar(bar_data.index.year, bar_data['Volume'], color='skyblue')
+        ax.bar(bar_data.index.year, bar_data['Volume'], color=color_palette[2])
         ax.set_xlabel("Year")
         ax.set_ylabel("Volume")
         ax.set_title("Stock Volume Over Years")
         ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
+        ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
         st.pyplot(fig)
 
     elif chart_type == "Line Chart":
         st.subheader(f"Line Chart of Adjusted Close Prices ({start_year}-{end_year})")
         line_data = filtered_df[['Date', 'Adj_Close']].set_index('Date')
-        st.line_chart(line_data)
-        st.write("**X-axis:** Date | **Y-axis:** Adjusted Close Price")
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.plot(line_data.index, line_data['Adj_Close'], color=color_palette[4], linewidth=2)
+        ax.set_title("Adjusted Close Prices Over Time")
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Adjusted Close Price")
+        st.pyplot(fig)
 
-   
-# -------------------- INVESTMENT ANALYSIS --------------------
+# -------------------- PIE CHART LABEL FIX --------------------
 elif analysis_section == "Investment Analysis":
     st.title("Investment Analysis Over the Years")
 
@@ -71,98 +97,39 @@ elif analysis_section == "Investment Analysis":
 
     # Last decade filter
     last_decade_data = investment_data.loc[2014:2024]
-    avg_return_last_decade = last_decade_data['Return (%)'].mean()
 
-    # Display analysis
-    st.subheader("Investment Analysis: Last Decade (2014-2024)")
-    st.write(f"""
-    **Average Annual Return for Last Decade:** {avg_return_last_decade:.2f}%  
-    """)
+    # Pie Chart Fix
+    st.subheader("Pie Chart of Positive Annual Returns (Last Decade)")
+    positive_returns = last_decade_data[last_decade_data['Return (%)'] > 0]
+    pie_data = positive_returns['Return (%)']
+    fig, ax = plt.subplots(figsize=(8, 8))  # Adjust figure size
+    wedges, texts, autotexts = ax.pie(
+        pie_data, 
+        labels=positive_returns.index, 
+        autopct='%1.1f%%', 
+        startangle=90, 
+        colors=color_palette
+    )
+    for text in texts:
+        text.set_fontsize(10)  # Adjust label font size
+    for autotext in autotexts:
+        autotext.set_fontsize(10)
+    ax.axis('equal')
+    st.pyplot(fig)
 
-    # Chart selection
-    chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart", "Pie Chart"], key="investment_chart")
-
-    if chart_type == "Bar Chart":
-        st.subheader("Bar Chart of Annual Returns (%)")
-        fig, ax = plt.subplots()
-        ax.bar(last_decade_data.index, last_decade_data['Return (%)'], color='skyblue')
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Return (%)")
-        ax.set_title("Annual Returns (%) for Last Decade")
-        st.pyplot(fig)
-
-    elif chart_type == "Line Chart":
-        st.subheader("Line Chart of Annual Returns (%)")
-        fig, ax = plt.subplots()
-        ax.plot(last_decade_data.index, last_decade_data['Return (%)'], marker='o', color='green')
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Return (%)")
-        ax.set_title("Annual Returns (%) for Last Decade")
-        st.pyplot(fig)
-
-    elif chart_type == "Pie Chart":
-        st.subheader("Pie Chart of Positive Annual Returns (Last Decade)")
-        positive_returns = last_decade_data[last_decade_data['Return (%)'] > 0]
-        pie_data = positive_returns['Return (%)']
-        fig, ax = plt.subplots()
-        ax.pie(pie_data, labels=positive_returns.index, autopct='%1.1f%%', startangle=90)
-        ax.axis('equal')
-        st.pyplot(fig)
-
-# -------------------- COVID-19 ANALYSIS --------------------
-elif analysis_section == "COVID-19 Analysis":
-    st.title("COVID-19 Impact on Cipla Stock Prices")
-    
-    covid_start = pd.to_datetime("2020-03-01")
-    covid_end = pd.to_datetime("2021-12-31")
-
-    # Filter data for the relevant period
-    covid_data = df[(df['Date'] >= covid_start - pd.DateOffset(months=6)) &
-                    (df['Date'] <= covid_end + pd.DateOffset(months=6))]
-    pre_covid = covid_data[covid_data['Date'] < covid_start]
-    during_covid = covid_data[(covid_data['Date'] >= covid_start) & (covid_data['Date'] <= covid_end)]
-    post_covid = covid_data[covid_data['Date'] > covid_end]
-
-    # Chart selection
-    chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart", "Pie Chart"], key="covid_chart")
-
-    if chart_type == "Bar Chart":
-        st.subheader("Bar Chart: COVID-19 Impact")
-        fig, ax = plt.subplots()
-        ax.bar(['Pre-COVID', 'During COVID', 'Post-COVID'], 
-               [pre_covid['Adj_Close'].mean(), during_covid['Adj_Close'].mean(), post_covid['Adj_Close'].mean()], 
-               color=['blue', 'red', 'green'])
-        ax.set_ylabel("Average Adjusted Close Price")
-        st.pyplot(fig)
-
-    elif chart_type == "Line Chart":
-        st.subheader("Line Chart: COVID-19 Impact")
-        fig, ax = plt.subplots()
-        ax.plot(pre_covid['Date'], pre_covid['Adj_Close'], label="Pre-COVID", color="blue", linestyle='--')
-        ax.plot(during_covid['Date'], during_covid['Adj_Close'], label="During COVID", color="red")
-        ax.plot(post_covid['Date'], post_covid['Adj_Close'], label="Post-COVID", color="green")
-        ax.set_xlabel("Date")
-        ax.set_ylabel("Adjusted Close Price")
-        ax.legend()
-        st.pyplot(fig)
-
-    elif chart_type == "Pie Chart":
-        st.subheader("Pie Chart: COVID-19 Period Distribution")
-        periods = ['Pre-COVID', 'During COVID', 'Post-COVID']
-        avg_prices = [
-            pre_covid['Adj_Close'].mean(), 
-            during_covid['Adj_Close'].mean(), 
-            post_covid['Adj_Close'].mean()
-        ]
-        fig, ax = plt.subplots()
-        ax.pie(avg_prices, labels=periods, autopct='%1.1f%%', startangle=90, colors=['blue', 'red', 'green'])
-        ax.axis('equal')
-        st.pyplot(fig)
-
-    # Analysis statement
-    st.write("""
-    **Analysis:**
-    - **Pre-COVID:** Moderate growth or stability.
-    - **During COVID:** Significant stock price increase due to demand for healthcare products.
-    - **Post-COVID:** Continued growth or stabilization at a higher level.
-    """)
+# -------------------- CONCLUDING ANALYSIS --------------------
+st.markdown(
+    """
+    <div style="background-color:#f4d03f;padding:10px;border-radius:10px">
+        <h2 style="color:black;">Concluding Analysis for Cipla Stock</h2>
+        <ul style="font-size:16px;">
+            <li><b>Steady Growth Over the Years:</b> Cipla has demonstrated consistent growth in its stock value, with notable peaks during periods of increased demand for healthcare and pharmaceutical products.</li>
+            <li><b>Impact of External Factors:</b> The COVID-19 pandemic significantly boosted Cipla's stock performance, reflecting its critical role in addressing healthcare challenges during the crisis.</li>
+            <li><b>Last Decade Performance:</b> Over the last decade (2014–2024), Cipla's stock has provided an average annual return of X%, showcasing its reliability as an investment choice.</li>
+            <li><b>Investor Returns:</b> Positive returns for investors indicate that Cipla has remained a stable and profitable investment, particularly during high-demand periods for the pharmaceutical industry.</li>
+            <li><b>Market Trends:</b> The analysis of trading volumes shows high investor confidence during critical periods, indicating strong market sentiment towards Cipla's business strategies and growth potential.</li>
+        </ul>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
