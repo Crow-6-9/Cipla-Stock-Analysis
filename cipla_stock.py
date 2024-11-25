@@ -3,16 +3,10 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
+# Load and display the dataset
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
-
-# Load the data and handle potential issues with missing or malformed data
-try:
-    df = pd.read_csv("cipla.csv")
-    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')  # Ensure 'Date' is datetime, 'coerce' invalid entries to NaT
-    df.dropna(subset=['Date', 'Volume', 'Adj_Close'], inplace=True)  # Drop rows with NaT in important columns
-except Exception as e:
-    st.error(f"Error loading the dataset: {e}")
-    st.stop()  # Stop execution if data loading fails
+df = pd.read_csv("cipla.csv")
+df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
 # Custom color schemes for charts
 color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
@@ -21,7 +15,7 @@ color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
 st.markdown(
     """
     <div style="background-color:#1abc9c;padding:10px;border-radius:10px">
-        <h1 style="color:black;text-align:center;">Cipla Stock Analysis</h1>
+        <h1 style="color:white;text-align:center;">Cipla Stock Analysis</h1>
     </div>
     <p style="font-size:18px;">
         Welcome to the Cipla Stock Analysis dashboard! This app provides comprehensive insights into the historical performance of Cipla's stock. 
@@ -62,9 +56,9 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
-    st.write(f"Filtered data from {start_date.date()} to {end_date.date()}")
-    filtered_df['Date'] = filtered_df['Date'].dt.date  # Ensure 'Date' is in datetime format
-    st.dataframe(filtered_df.tail(100))
+    # Display the last 100 values first
+    st.subheader("Last 100 Values from the Dataset")
+    st.dataframe(df.tail(100), height=400)  # Scrollable table for better visibility
 
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
@@ -72,24 +66,15 @@ if analysis_section == "Stock Visualization":
     # Display selected chart
     if chart_type == "Bar Chart":
         st.subheader(f"Bar Chart of Stock Volume ({start_year}-{end_year})")
-
-        # Ensure 'Volume' is numeric and resample by year
-        filtered_df['Volume'] = pd.to_numeric(filtered_df['Volume'], errors='coerce')  # Convert Volume to numeric
         bar_data = filtered_df[['Date', 'Volume']].set_index('Date').resample('Y').sum()
-
-        # Check if there's any data after resampling (important if data is sparse)
-        if not bar_data.empty:
-            fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
-            ax.bar(bar_data.index.year, bar_data['Volume'], color=color_palette[2])
-            ax.set_xlabel("Year")
-            ax.set_ylabel("Volume")
-            ax.set_title("Stock Volume Over Years")
-            ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
-            ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
-            ax.grid(True)  # Add gridlines for better readability
-            st.pyplot(fig)
-        else:
-            st.error("No data available to plot the Bar Chart. Please check the selected date range.")
+        fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
+        ax.bar(bar_data.index.year, bar_data['Volume'], color=color_palette[2])
+        ax.set_xlabel("Year")
+        ax.set_ylabel("Volume")
+        ax.set_title("Stock Volume Over Years")
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
+        ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
+        st.pyplot(fig)
 
     elif chart_type == "Line Chart":
         st.subheader(f"Line Chart of Adjusted Close Prices ({start_year}-{end_year})")
@@ -99,9 +84,7 @@ if analysis_section == "Stock Visualization":
         ax.set_title("Adjusted Close Prices Over Time")
         ax.set_xlabel("Date")
         ax.set_ylabel("Adjusted Close Price")
-        ax.grid(True)  # Add gridlines for better readability
         st.pyplot(fig)
-
 
 # -------------------- PIE CHART LABEL FIX --------------------
 elif analysis_section == "Investment Analysis":
@@ -139,7 +122,7 @@ st.markdown(
     """
     <div style="background-color:#f4d03f;padding:10px;border-radius:10px">
         <h2 style="color:black;">Concluding Analysis for Cipla Stock</h2>
-        <ul style="font-size:16px;color:black;">
+        <ul style="font-size:16px;">
             <li><b>Steady Growth Over the Years:</b> Cipla has demonstrated consistent growth in its stock value, with notable peaks during periods of increased demand for healthcare and pharmaceutical products.</li>
             <li><b>Impact of External Factors:</b> The COVID-19 pandemic significantly boosted Cipla's stock performance, reflecting its critical role in addressing healthcare challenges during the crisis.</li>
             <li><b>Last Decade Performance:</b> Over the last decade (2014–2024), Cipla's stock has provided an average annual return of X%, showcasing its reliability as an investment choice.</li>
