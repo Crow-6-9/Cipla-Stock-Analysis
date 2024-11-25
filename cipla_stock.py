@@ -56,8 +56,8 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
-    st.write("Filtered data from {} to {}".format(start_date.date(), end_date.date()))
-    filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
+    st.write(f"Filtered data from {start_date.date()} to {end_date.date()}")
+    filtered_df['Date'] = pd.to_datetime(filtered_df['Date']).dt.date  # Ensure 'Date' is in datetime format
     st.dataframe(filtered_df.tail(100))
 
     # Chart selection
@@ -67,7 +67,8 @@ if analysis_section == "Stock Visualization":
     if chart_type == "Bar Chart":
         st.subheader(f"Bar Chart of Stock Volume ({start_year}-{end_year})")
 
-        # Ensure correct data handling
+        # Ensure 'Volume' is numeric and resample by year
+        filtered_df['Volume'] = pd.to_numeric(filtered_df['Volume'], errors='coerce')  # Convert Volume to numeric
         bar_data = filtered_df[['Date', 'Volume']].set_index('Date').resample('Y').sum()
 
         # Check if there's any data after resampling (important if data is sparse)
