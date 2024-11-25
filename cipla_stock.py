@@ -6,7 +6,6 @@ import matplotlib.ticker as ticker
 # Load and display the dataset
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
-print(df.tail(200))
 df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
 # Sidebar for analysis selection
@@ -18,12 +17,6 @@ analysis_section = st.sidebar.radio(
 
 # Limit analysis between 1996 and 2024
 min_year, max_year = 1996, 2024
-
-# Sidebar GitHub Link
-st.sidebar.markdown("""
-### Connect on GitHub
-[![View on GitHub](https://img.shields.io/badge/View%20on-GitHub-blue?logo=github)](https://github.com/Crow-6-9/Cipla-Stock-Analysis)
-""")
 
 # -------------------- STOCK VISUALIZATION --------------------
 if analysis_section == "Stock Visualization":
@@ -45,7 +38,7 @@ if analysis_section == "Stock Visualization":
     if chart_type == "Bar Chart":
         st.subheader(f"Bar Chart of Stock Volume ({start_year}-{end_year})")
         bar_data = filtered_df[['Date', 'Volume']].set_index('Date').resample('Y').sum()
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
         ax.bar(bar_data.index.year, bar_data['Volume'], color='skyblue')
         ax.set_xlabel("Year")
         ax.set_ylabel("Volume")
@@ -58,6 +51,10 @@ if analysis_section == "Stock Visualization":
         line_data = filtered_df[['Date', 'Adj_Close']].set_index('Date')
         st.line_chart(line_data)
         st.write("**X-axis:** Date | **Y-axis:** Adjusted Close Price")
+
+    # Display the last 100 values
+    st.subheader("Last 100 Values from the Dataset")
+    st.dataframe(df.tail(100))
 
 # -------------------- INVESTMENT ANALYSIS --------------------
 elif analysis_section == "Investment Analysis":
