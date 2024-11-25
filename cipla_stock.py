@@ -7,6 +7,7 @@ import matplotlib.ticker as ticker
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
 df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
+st.dataframe(df.tail(100))
 
 # Custom color schemes for charts
 color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
