@@ -85,9 +85,6 @@ if analysis_section == "Stock Visualization":
         ax.set_ylabel("Adjusted Close Price")
         st.pyplot(fig)
 
-# Display the last 100 dates in Streamlit
-st.write(last_100_dates)
-
 # -------------------- PIE CHART LABEL FIX --------------------
 elif analysis_section == "Investment Analysis":
     st.title("Investment Analysis Over the Years")
