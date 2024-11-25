@@ -44,6 +44,10 @@ analysis_section = st.sidebar.radio(
 min_year, max_year = 1996, 2024
 
 # -------------------- STOCK VISUALIZATION --------------------
+filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
+st.write("### Last 100 Records of Filtered Data")
+st.dataframe(filtered_df.tail(100))
+
 if analysis_section == "Stock Visualization":
     st.title("Cipla Stock Data Visualization")
 
