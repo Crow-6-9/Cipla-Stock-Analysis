@@ -43,6 +43,7 @@ analysis_section = st.sidebar.radio(
 min_year, max_year = 1996, 2024
 
 # -------------------- STOCK VISUALIZATION --------------------
+# -------------------- STOCK VISUALIZATION --------------------
 if analysis_section == "Stock Visualization":
     st.title("Cipla Stock Data Visualization")
 
@@ -55,7 +56,7 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
-    st.write("Filtered data from 24/06/24 to 11/11/24")
+    st.write("Filtered data from {} to {}".format(start_date.date(), end_date.date()))
     filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
     st.dataframe(filtered_df.tail(100))
 
@@ -65,15 +66,22 @@ if analysis_section == "Stock Visualization":
     # Display selected chart
     if chart_type == "Bar Chart":
         st.subheader(f"Bar Chart of Stock Volume ({start_year}-{end_year})")
+
+        # Ensure correct data handling
         bar_data = filtered_df[['Date', 'Volume']].set_index('Date').resample('Y').sum()
-        fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
-        ax.bar(bar_data.index.year, bar_data['Volume'], color=color_palette[2])
-        ax.set_xlabel("Year")
-        ax.set_ylabel("Volume")
-        ax.set_title("Stock Volume Over Years")
-        ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
-        ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
-        st.pyplot(fig)
+
+        # Check if there's any data after resampling (important if data is sparse)
+        if not bar_data.empty:
+            fig, ax = plt.subplots(figsize=(10, 6))  # Adjust figure size
+            ax.bar(bar_data.index.year, bar_data['Volume'], color=color_palette[2])
+            ax.set_xlabel("Year")
+            ax.set_ylabel("Volume")
+            ax.set_title("Stock Volume Over Years")
+            ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
+            ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
+            st.pyplot(fig)
+        else:
+            st.error("No data available to plot the Bar Chart. Please check the selected date range.")
 
     elif chart_type == "Line Chart":
         st.subheader(f"Line Chart of Adjusted Close Prices ({start_year}-{end_year})")
@@ -84,6 +92,7 @@ if analysis_section == "Stock Visualization":
         ax.set_xlabel("Date")
         ax.set_ylabel("Adjusted Close Price")
         st.pyplot(fig)
+
 
 # -------------------- PIE CHART LABEL FIX --------------------
 elif analysis_section == "Investment Analysis":
