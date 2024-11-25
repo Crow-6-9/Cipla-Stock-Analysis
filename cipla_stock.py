@@ -4,8 +4,15 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
-df = pd.read_csv("cipla.csv")
-df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
+
+# Load the data and handle potential issues with missing or malformed data
+try:
+    df = pd.read_csv("cipla.csv")
+    df['Date'] = pd.to_datetime(df['Date'], errors='coerce')  # Ensure 'Date' is datetime, 'coerce' invalid entries to NaT
+    df.dropna(subset=['Date', 'Volume', 'Adj_Close'], inplace=True)  # Drop rows with NaT in important columns
+except Exception as e:
+    st.error(f"Error loading the dataset: {e}")
+    st.stop()  # Stop execution if data loading fails
 
 # Custom color schemes for charts
 color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
@@ -43,7 +50,6 @@ analysis_section = st.sidebar.radio(
 min_year, max_year = 1996, 2024
 
 # -------------------- STOCK VISUALIZATION --------------------
-# -------------------- STOCK VISUALIZATION --------------------
 if analysis_section == "Stock Visualization":
     st.title("Cipla Stock Data Visualization")
 
@@ -57,7 +63,7 @@ if analysis_section == "Stock Visualization":
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
     st.write(f"Filtered data from {start_date.date()} to {end_date.date()}")
-    filtered_df['Date'] = pd.to_datetime(filtered_df['Date']).dt.date  # Ensure 'Date' is in datetime format
+    filtered_df['Date'] = filtered_df['Date'].dt.date  # Ensure 'Date' is in datetime format
     st.dataframe(filtered_df.tail(100))
 
     # Chart selection
@@ -80,6 +86,7 @@ if analysis_section == "Stock Visualization":
             ax.set_title("Stock Volume Over Years")
             ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K'))
             ax.tick_params(axis='x', rotation=45)  # Rotate year labels to avoid collision
+            ax.grid(True)  # Add gridlines for better readability
             st.pyplot(fig)
         else:
             st.error("No data available to plot the Bar Chart. Please check the selected date range.")
@@ -92,6 +99,7 @@ if analysis_section == "Stock Visualization":
         ax.set_title("Adjusted Close Prices Over Time")
         ax.set_xlabel("Date")
         ax.set_ylabel("Adjusted Close Price")
+        ax.grid(True)  # Add gridlines for better readability
         st.pyplot(fig)
 
 
@@ -142,4 +150,3 @@ st.markdown(
     """, 
     unsafe_allow_html=True
 )
-
