@@ -3,13 +3,10 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-# Load and display the dataset
+
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
-# Display last 100 values with only dates
-filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
-st.write("### Last 100 Records of Filtered Data")
-st.dataframe(filtered_df.tail(100))
+df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
 
 # Custom color schemes for charts
@@ -60,9 +57,9 @@ if analysis_section == "Stock Visualization":
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
-    # Display the last 100 values first
-    st.subheader("Last 100 Values from the Dataset")
-    st.dataframe(df.tail(100), height=400)  # Scrollable table for better visibility
+    st.set_page_config(layout="wide")  # Use wide layout for better visualization
+    df = pd.read_csv("cipla.csv")
+    df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
