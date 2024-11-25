@@ -6,7 +6,11 @@ import matplotlib.ticker as ticker
 # Load and display the dataset
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
-df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
+# Display last 100 values with only dates
+filtered_df['Date'] = filtered_df['Date'].dt.date  # Extract only the date part
+st.write("### Last 100 Records of Filtered Data")
+st.dataframe(filtered_df.tail(100))
+
 
 # Custom color schemes for charts
 color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
