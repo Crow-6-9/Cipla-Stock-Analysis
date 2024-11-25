@@ -3,11 +3,9 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-
 st.set_page_config(layout="wide")  # Use wide layout for better visualization
 df = pd.read_csv("cipla.csv")
 df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
-
 
 # Custom color schemes for charts
 color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
@@ -56,10 +54,6 @@ if analysis_section == "Stock Visualization":
     start_date = pd.to_datetime(f"{start_year}-01-01")
     end_date = pd.to_datetime(f"{end_year}-12-31")
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
-
-    st.set_page_config(layout="wide")  # Use wide layout for better visualization
-    df = pd.read_csv("cipla.csv")
-    df['Date'] = pd.to_datetime(df['Date'])  # Convert 'Date' to datetime format
 
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
