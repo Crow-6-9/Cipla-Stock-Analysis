@@ -14,7 +14,7 @@ color_palette = plt.cm.tab10.colors  # Use a vibrant color palette
 # Add introductory section
 st.markdown(
     """
-    <div style="background-color:#f4d03f;padding:10px;border-radius:10px">
+    <div style="background-color:#1abc9c;padding:10px;border-radius:10px">
         <h1 style="color:black;text-align:center;">Cipla Stock Analysis</h1>
     </div>
     <p style="font-size:18px;">
