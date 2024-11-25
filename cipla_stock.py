@@ -19,6 +19,13 @@ analysis_section = st.sidebar.radio(
 min_year, max_year = 1996, 2024
 
 # -------------------- STOCK VISUALIZATION --------------------
+
+ # Display the last 100 values
+    st.subheader("Stock details from 24th June - 13th Nov | 2024 ")
+    st.dataframe(df.tail(100))
+
+
+
 if analysis_section == "Stock Visualization":
     st.title("Cipla Stock Data Visualization")
 
@@ -52,10 +59,7 @@ if analysis_section == "Stock Visualization":
         st.line_chart(line_data)
         st.write("**X-axis:** Date | **Y-axis:** Adjusted Close Price")
 
-    # Display the last 100 values
-    st.subheader("Last 100 Values from the Dataset")
-    st.dataframe(df.tail(100))
-
+   
 # -------------------- INVESTMENT ANALYSIS --------------------
 elif analysis_section == "Investment Analysis":
     st.title("Investment Analysis Over the Years")
