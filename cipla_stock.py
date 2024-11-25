@@ -81,8 +81,8 @@ if analysis_section == "Stock Visualization":
         ax.set_ylabel("Adjusted Close Price")
         st.pyplot(fig)
 
-    last_100_dates = df[['Date']].tail(100)  # Select only the 'Date' column
-    last_100_dates['Date'] = last_100_dates['Date'].dt.date  # Remove the time part
+last_100_dates = df[['Date']].tail(100)  # Select only the 'Date' column
+last_100_dates['Date'] = last_100_dates['Date'].dt.date  # Remove the time part
 
 # Display the last 100 dates in Streamlit
 st.write(last_100_dates)
