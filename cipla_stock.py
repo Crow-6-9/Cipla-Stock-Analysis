@@ -165,3 +165,4 @@ elif analysis_section == "COVID-19 Analysis":
     - **During COVID:** Significant stock price increase due to demand for healthcare products.
     - **Post-COVID:** Continued growth or stabilization at a higher level.
     """)
+#AMit Khunmbahr
