@@ -145,46 +145,40 @@ elif analysis_section == "COVID-19 Analysis":
     pre_covid_data = df[(df['Date'] < covid_start)]
     post_covid_data = df[(df['Date'] > covid_end)]
 
-    # Line chart for stock performance during COVID-19
-    st.subheader("Stock Performance During COVID-19")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(covid_data['Date'], covid_data['Adj_Close'], color=color_palette[1], label='COVID-19 Period')
-    ax.axvspan(covid_start, covid_end, color='lightgrey', alpha=0.3, label="COVID-19 Period Highlight")
-    ax.set_title("Adjusted Close Prices During COVID-19")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Adjusted Close Price")
-    ax.legend()
-    st.pyplot(fig)
+    # Chart type selection
+    chart_type = st.sidebar.radio("Select Chart Type for COVID-19 Analysis", ["Bar Chart", "Line Chart"])
 
-    # Comparison of average stock performance
-    covid_avg = covid_data['Adj_Close'].mean()
-    pre_covid_avg = pre_covid_data['Adj_Close'].mean()
-    post_covid_avg = post_covid_data['Adj_Close'].mean()
+    if chart_type == "Bar Chart":
+        st.subheader("Stock Performance During COVID-19")
+        covid_avg = covid_data['Adj_Close'].mean()
+        pre_covid_avg = pre_covid_data['Adj_Close'].mean()
+        post_covid_avg = post_covid_data['Adj_Close'].mean()
 
-    st.subheader("Comparison of Average Adjusted Close Prices")
-    st.markdown(
-        f"""
-        - **Pre-COVID-19 Period:** ₹{pre_covid_avg:.2f}
-        - **COVID-19 Period:** ₹{covid_avg:.2f}
-        - **Post-COVID-19 Period:** ₹{post_covid_avg:.2f}
-        """
-    )
+        # Bar chart for average prices
+        comparison_data = {
+            "Period": ["Pre-COVID-19", "COVID-19", "Post-COVID-19"],
+            "Avg Price": [pre_covid_avg, covid_avg, post_covid_avg]
+        }
+        comparison_df = pd.DataFrame(comparison_data)
+        fig, ax = plt.subplots(figsize=(8, 5))  # Balanced figure size
+        ax.bar(comparison_df["Period"], comparison_df["Avg Price"], color=color_palette[:3])
+        ax.set_title("Average Adjusted Close Prices During COVID-19")
+        ax.set_ylabel("Average Adjusted Close Price")
+        st.pyplot(fig)
 
-    # Bar chart comparison
-    st.subheader("Average Adjusted Close Prices: Pre, During, and Post COVID-19")
-    comparison_data = {
-        "Period": ["Pre-COVID-19", "COVID-19", "Post-COVID-19"],
-        "Avg Price": [pre_covid_avg, covid_avg, post_covid_avg]
-    }
-    comparison_df = pd.DataFrame(comparison_data)
+    elif chart_type == "Line Chart":
+        st.subheader("Adjusted Close Prices During COVID-19")
+        fig, ax = plt.subplots(figsize=(10, 5))  # Balanced figure size
+        ax.plot(covid_data['Date'], covid_data['Adj_Close'], color=color_palette[1], marker='o', label="COVID-19 Period")
+        ax.axvspan(covid_start, covid_end, color='lightgrey', alpha=0.3, label="COVID-19 Period Highlight")
+        ax.set_title("Adjusted Close Prices During COVID-19")
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Adjusted Close Price")
+        ax.legend()
+        ax.grid(True, linestyle='--', alpha=0.6)
+        st.pyplot(fig)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    ax.bar(comparison_df["Period"], comparison_df["Avg Price"], color=color_palette[:3])
-    ax.set_title("Comparison of Average Prices")
-    ax.set_ylabel("Average Adjusted Close Price")
-    st.pyplot(fig)
-
-    # Insights and summary
+    # Insights
     st.markdown(
         """
         **Key Insights:**
@@ -193,6 +187,7 @@ elif analysis_section == "COVID-19 Analysis":
         - The increase in adjusted close prices during COVID-19 indicates strong investor confidence in Cipla's ability to capitalize on the healthcare demand surge.
         """
     )
+
 
 
 
