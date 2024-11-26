@@ -117,6 +117,73 @@ elif analysis_section == "Investment Analysis":
     ax.axis('equal')
     st.pyplot(fig)
 
+
+#---------------------------- Covid analysis -----------------------#
+
+elif analysis_section == "COVID-19 Analysis":
+    st.title("Impact of COVID-19 on Cipla Stock Performance")
+
+    # Define the COVID-19 period
+    covid_start = pd.to_datetime("2020-03-01")
+    covid_end = pd.to_datetime("2021-12-31")
+
+    # Filter data for the COVID-19 period
+    covid_data = df[(df['Date'] >= covid_start) & (df['Date'] <= covid_end)]
+    pre_covid_data = df[(df['Date'] < covid_start)]
+    post_covid_data = df[(df['Date'] > covid_end)]
+
+    # Line chart for stock performance during COVID-19
+    st.subheader("Stock Performance During COVID-19")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(covid_data['Date'], covid_data['Adj_Close'], color=color_palette[1], label='COVID-19 Period')
+    ax.axvspan(covid_start, covid_end, color='lightgrey', alpha=0.3, label="COVID-19 Period Highlight")
+    ax.set_title("Adjusted Close Prices During COVID-19")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Adjusted Close Price")
+    ax.legend()
+    st.pyplot(fig)
+
+    # Comparison of average stock performance
+    covid_avg = covid_data['Adj_Close'].mean()
+    pre_covid_avg = pre_covid_data['Adj_Close'].mean()
+    post_covid_avg = post_covid_data['Adj_Close'].mean()
+
+    st.subheader("Comparison of Average Adjusted Close Prices")
+    st.markdown(
+        f"""
+        - **Pre-COVID-19 Period:** ₹{pre_covid_avg:.2f}
+        - **COVID-19 Period:** ₹{covid_avg:.2f}
+        - **Post-COVID-19 Period:** ₹{post_covid_avg:.2f}
+        """
+    )
+
+    # Bar chart comparison
+    st.subheader("Average Adjusted Close Prices: Pre, During, and Post COVID-19")
+    comparison_data = {
+        "Period": ["Pre-COVID-19", "COVID-19", "Post-COVID-19"],
+        "Avg Price": [pre_covid_avg, covid_avg, post_covid_avg]
+    }
+    comparison_df = pd.DataFrame(comparison_data)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.bar(comparison_df["Period"], comparison_df["Avg Price"], color=color_palette[:3])
+    ax.set_title("Comparison of Average Prices")
+    ax.set_ylabel("Average Adjusted Close Price")
+    st.pyplot(fig)
+
+    # Insights and summary
+    st.markdown(
+        """
+        **Key Insights:**
+        - Cipla's stock showed resilience and growth during the COVID-19 period, reflecting its pivotal role in addressing healthcare needs.
+        - Post-COVID-19, the stock stabilized, maintaining a higher average price than the pre-COVID period.
+        - The increase in adjusted close prices during COVID-19 indicates strong investor confidence in Cipla's ability to capitalize on the healthcare demand surge.
+        """
+    )
+
+
+
+
 # -------------------- CONCLUDING ANALYSIS --------------------
 st.markdown(
     """
