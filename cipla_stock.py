@@ -273,7 +273,7 @@ st.markdown(
         <ul style="font-size:16px; color:black ">
             <li><b>Steady Growth Over the Years:</b> Cipla has demonstrated consistent growth in its stock value, with notable peaks during periods of increased demand for healthcare and pharmaceutical products.</li>
             <li><b>Impact of External Factors:</b> The COVID-19 pandemic significantly boosted Cipla's stock performance, reflecting its critical role in addressing healthcare challenges during the crisis.</li>
-            <li><b>Last Decade Performance:</b> Over the last decade (2014–2024), Cipla's stock has provided an average annual return of X%, showcasing its reliability as an investment choice.</li>
+            <li><b>Last Decade Performance:</b> Over the last decade (2014–2024), Cipla's stock has provided an average annual return of 28.98%, showcasing its reliability as an investment choice.</li>
             <li><b>Investor Returns:</b> Positive returns for investors indicate that Cipla has remained a stable and profitable investment, particularly during high-demand periods for the pharmaceutical industry.</li>
             <li><b>Market Trends:</b> The analysis of trading volumes shows high investor confidence during critical periods, indicating strong market sentiment towards Cipla's business strategies and growth potential.</li>
         </ul>
