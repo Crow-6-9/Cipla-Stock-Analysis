@@ -2,7 +2,7 @@
 
 My team and I have builed a simple web app where you can see our analysis like: 
 
-_1. Stock Visuaization [Choose your year range and it will grow and shrink accordingly]_
+_1. Stock Visuaization **[Choose your year range and it will grow and shrink accordingly]_**
 
 _2. Investment Analysis [2014-2024]_
 
