@@ -13,3 +13,6 @@ _3. Covid-19 Analysis_
 
 We have analyzed the cipla stock analysis from 
 **1996-01-01 - 2024-11-14**. 
+
+_Let's discuss any additional insights you have. 
+Please send me a pull request, and we can analyze it together_ 
