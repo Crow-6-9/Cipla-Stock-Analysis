@@ -86,6 +86,79 @@ if analysis_section == "Stock Visualization":
         ax.set_ylabel("Adjusted Close Price")
         st.pyplot(fig)
 
+
+
+# -------------------- INVESTMENT ANALYSIS --------------------
+elif analysis_section == "Investment Analysis":
+    st.title("Investment Analysis Over the Years")
+
+    # Calculate annual returns
+    df['Year'] = df['Date'].dt.year
+    investment_data = df.groupby('Year')['Adj_Close'].agg(['first', 'last'])
+    investment_data['Return (%)'] = ((investment_data['last'] - investment_data['first']) / investment_data['first']) * 100
+
+    # Calculate total and average returns for the entire dataset
+    total_return = ((df['Adj_Close'].iloc[-1] - df['Adj_Close'].iloc[0]) / df['Adj_Close'].iloc[0]) * 100
+    avg_annual_return = investment_data['Return (%)'].mean()
+
+    st.markdown(
+        f"""
+        <div style="background-color:#1abc9c;padding:10px;border-radius:10px;">
+            <h3 style="color:white;text-align:center;">Investor Insights</h3>
+            <p style="color:white;font-size:18px;text-align:center;">
+                If an investor had invested in Cipla stock from the start of the dataset to the most recent date:
+            </p>
+            <ul style="color:white;font-size:16px;">
+                <li><b>Total Return:</b> {total_return:.2f}%</li>
+                <li><b>Average Annual Return:</b> {avg_annual_return:.2f}%</li>
+            </ul>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+
+    # Last decade filter
+    last_decade_data = investment_data.loc[2014:2024]
+
+    # Chart type selection
+    chart_type = st.sidebar.radio("Select Chart Type for Investment Analysis", ["Pie Chart", "Line Chart"])
+
+    if chart_type == "Pie Chart":
+        st.subheader("Pie Chart of Positive Annual Returns (Last Decade)")
+        positive_returns = last_decade_data[last_decade_data['Return (%)'] > 0]
+        pie_data = positive_returns['Return (%)']
+        fig, ax = plt.subplots(figsize=(6, 6))  # Fixed smaller figure size
+        wedges, texts, autotexts = ax.pie(
+            pie_data,
+            labels=positive_returns.index,
+            autopct='%1.1f%%',
+            startangle=90,
+            colors=color_palette
+        )
+        for text in texts:
+            text.set_fontsize(10)  # Adjust label font size
+        for autotext in autotexts:
+            autotext.set_fontsize(10)
+        ax.axis('equal')
+        st.pyplot(fig)
+
+    elif chart_type == "Line Chart":
+        st.subheader("Line Chart of Annual Returns (Last Decade)")
+        fig, ax = plt.subplots(figsize=(8, 5))  # Balanced figure size
+        ax.plot(last_decade_data.index, last_decade_data['Return (%)'], color=color_palette[2], marker='o')
+        ax.set_title("Annual Returns Over the Last Decade")
+        ax.set_xlabel("Year")
+        ax.set_ylabel("Return (%)")
+        ax.grid(True, linestyle='--', alpha=0.6)
+        st.pyplot(fig)
+
+
+
+
+
+
+
+
 # -------------------- PIE CHART LABEL FIX --------------------
 elif analysis_section == "Investment Analysis":
     st.title("Investment Analysis Over the Years")
