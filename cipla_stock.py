@@ -57,8 +57,8 @@ if analysis_section == "Stock Visualization":
     filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
 
     # Display the last 100 values first
-    st.subheader("Last 100 Values from the Dataset")
-    st.dataframe(df.tail(100), height=400)  # Scrollable table for better visibility
+    # st.subheader("Last 100 Values from the Dataset")
+    # st.dataframe(df.tail(100), height=400)  # Scrollable table for better visibility
 
     # Chart selection
     chart_type = st.sidebar.radio("Select Chart Type", ["Bar Chart", "Line Chart"])
